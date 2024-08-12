@@ -2,6 +2,7 @@ package asyncbatchpoc.common;
 
 import asyncbatchpoc.consumer.batch.ReceiveQueueClient;
 import com.google.gson.Gson;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
@@ -13,6 +14,21 @@ import java.util.List;
 
 @Component
 public class ReceiveSqsClient implements ReceiveQueueClient {
+
+  @Value("${aws.sqs.endpoint}")
+  private String endpoint;
+
+  @Value("${aws.sqs.accountId}")
+  private String accountId;
+
+  @Value("${aws.sqs.queueName}")
+  private String queueName;
+
+  @Value("${aws.sqs.maxNumberOfMessages}")
+  private Integer maxNumberOfMessages;
+
+  @Value("${aws.sqs.waitTimeSeconds}")
+  private Integer waitTimeSeconds;
 
   private final SqsClient sqsClient;
 
@@ -27,9 +43,9 @@ public class ReceiveSqsClient implements ReceiveQueueClient {
     ReceiveMessageRequest receiveMessageRequest =
         ReceiveMessageRequest
             .builder()
-            .queueUrl("http://localhost:4566/000000000000/create-keyword-tree-queue")
-            .maxNumberOfMessages(10)
-            .waitTimeSeconds(5)
+            .queueUrl(queueUrl())
+            .maxNumberOfMessages(maxNumberOfMessages)
+            .waitTimeSeconds(waitTimeSeconds)
             .build();
     List<Message> received = sqsClient.receiveMessage(receiveMessageRequest).messages();
 
@@ -41,7 +57,7 @@ public class ReceiveSqsClient implements ReceiveQueueClient {
     // 受信メッセージを削除
     for (Message message : received) {
       DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder()
-          .queueUrl("http://localhost:4566/000000000000/create-keyword-tree-queue")
+          .queueUrl(queueUrl())
           .receiptHandle(message.receiptHandle())
           .build();
       sqsClient.deleteMessage(deleteMessageRequest);
@@ -58,10 +74,15 @@ public class ReceiveSqsClient implements ReceiveQueueClient {
     SendMessageRequest request =
         SendMessageRequest
             .builder()
-            .queueUrl("http://localhost:4566/000000000000/create-keyword-tree-queue")
+            .queueUrl(queueUrl())
             .messageBody(gson.toJson(message))
             .build();
 
     sqsClient.sendMessage(request);
+  }
+
+  private String queueUrl() {
+    String format = "%s/%s/%s";
+    return String.format(format, endpoint, accountId, queueName);
   }
 }

@@ -2,12 +2,22 @@ package asyncbatchpoc.common;
 
 import asyncbatchpoc.publisher.SendQueueClient;
 import com.google.gson.Gson;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 
 @Component
 public class SendSqsClient implements SendQueueClient {
+
+  @Value("${aws.sqs.endpoint}")
+  private String endpoint;
+
+  @Value("${aws.sqs.accountId}")
+  private String accountId;
+
+  @Value("${aws.sqs.queueName}")
+  private String queueName;
 
   private final SqsClient sqsClient;
 
@@ -20,10 +30,15 @@ public class SendSqsClient implements SendQueueClient {
     SendMessageRequest request =
         SendMessageRequest
             .builder()
-            .queueUrl("http://localhost:4566/000000000000/create-keyword-tree-queue")
+            .queueUrl(queueUrl())
             .messageBody(gson.toJson(message))
             .build();
 
     sqsClient.sendMessage(request);
+  }
+
+  private String queueUrl() {
+    String format = "%s/%s/%s";
+    return String.format(format, endpoint, accountId, queueName);
   }
 }

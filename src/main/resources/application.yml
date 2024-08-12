@@ -1,0 +1,11 @@
+aws:
+  credentials:
+    accessKey: dummy
+    secretKey: dummy
+  region: us-east-1
+  sqs:
+    endpoint: http://localhost:4566
+    accountId: "000000000000"
+    queueName: create-keyword-tree-queue
+    maxNumberOfMessages: 10
+    waitTimeSeconds: 0
