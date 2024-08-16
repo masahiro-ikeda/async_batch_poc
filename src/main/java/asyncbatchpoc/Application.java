@@ -6,8 +6,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-@EnableAsync(proxyTargetClass = true)
 @EnableScheduling
+@EnableAsync(proxyTargetClass = true)
 public class Application {
 
   public static void main(String[] args) {
