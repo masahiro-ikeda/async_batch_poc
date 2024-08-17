@@ -1,4 +1,4 @@
-package asyncbatchpoc.usecase.exception;
+package asyncbatchpoc.application.exception;
 
 /**
  * アプリケーション起因の例外.

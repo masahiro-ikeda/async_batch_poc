@@ -1,4 +1,4 @@
-package asyncbatchpoc.usecase;
+package asyncbatchpoc.application;
 
 import asyncbatchpoc.domain.KeywordTree;
 import asyncbatchpoc.domain.KeywordTreeRepository;

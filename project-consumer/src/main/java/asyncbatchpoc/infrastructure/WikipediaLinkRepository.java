@@ -1,6 +1,6 @@
 package asyncbatchpoc.infrastructure;
 
-import asyncbatchpoc.usecase.exception.ApplicationException;
+import asyncbatchpoc.application.exception.ApplicationException;
 import asyncbatchpoc.domain.Link;
 import asyncbatchpoc.domain.LinkRepository;
 import org.jsoup.HttpStatusException;
@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 @Repository
-public class LinkRepositoryImpl implements LinkRepository {
+public class WikipediaLinkRepository implements LinkRepository {
 
   private static final String WIKIPEDIA_URL_FORMAT = "https://ja.wikipedia.org/wiki/%s";
   private static final String WIKIPEDIA_LINK_REGEX = "^/wiki/.*$";
@@ -26,7 +26,7 @@ public class LinkRepositoryImpl implements LinkRepository {
    */
   @Override
   public List<Link> findByKeyword(String keyword) {
-    Logger logger = Logger.getLogger("LinkRepositoryImpl");
+    Logger logger = Logger.getLogger("WikiLinkRepository");
     String url = String.format(WIKIPEDIA_URL_FORMAT, keyword);
 
     Document document;
@@ -49,18 +49,15 @@ public class LinkRepositoryImpl implements LinkRepository {
     if (firstParagraph.isEmpty()) {
       return List.of(); // <p>が存在しない場合
     }
-    Elements links = firstParagraph.get().select("a[href]");
+    Elements LinkElements = firstParagraph.get().select("a[href]");
     // wikipediaリンクのみ抽出
-    List<Element> wikipediaLinks = links.stream()
+    List<Link> wikipediaLinks = LinkElements.stream()
         .filter(link -> link.attr("href").matches(WIKIPEDIA_LINK_REGEX))
-        .toList();
-
-    List<Link> result = wikipediaLinks.stream()
         .map(link -> new Link(link.attr("title"), link.attr("href")))
         .toList();
 
-    logger.info(String.format("Keyword=%s, result=[%s]", keyword, String.join(",", result.stream().map(Link::word).toList())));
+    logger.info(String.format("keyword=%s, result=[%s]", keyword, String.join(",", wikipediaLinks.stream().map(Link::word).toList())));
 
-    return result;
+    return wikipediaLinks;
   }
 }

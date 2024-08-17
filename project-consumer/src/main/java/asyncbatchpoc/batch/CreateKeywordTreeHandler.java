@@ -1,14 +1,13 @@
 package asyncbatchpoc.batch;
 
+import asyncbatchpoc.application.CreateKeywordTreeService;
+import asyncbatchpoc.application.exception.ApplicationException;
 import asyncbatchpoc.domain.CreateKeywordTreeMessage;
 import asyncbatchpoc.domain.MessageQueueClient;
-import asyncbatchpoc.usecase.CreateKeywordTreeService;
-import asyncbatchpoc.usecase.exception.ApplicationException;
 import com.google.gson.Gson;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,9 +23,10 @@ public class CreateKeywordTreeHandler extends Thread {
   }
 
   @Async
-  public CompletableFuture<CreateKeywordTreeMessage> handle(CreateKeywordTreeMessage message) {
+  public void handle(CreateKeywordTreeMessage message) {
+    Logger logger = Logger.getLogger("CreateKeywordTreeHandler");
+
     Gson gson = new Gson();
-    Logger logger = Logger.getLogger("AsyncBatchHandler");
     logger.info("Start Batch. [" + gson.toJson(message) + "]");
 
     try {
@@ -35,7 +35,6 @@ public class CreateKeywordTreeHandler extends Thread {
       // リトライ不可
       String format = "An unrecoverable exception has occurred. message=[%s] cause=[%s]";
       logger.log(Level.SEVERE, String.format(format, gson.toJson(message), e.getMessage()));
-      return CompletableFuture.failedFuture(e);
     } catch (RuntimeException e) {
       if (message.canRetry()) {
         String format = "Retry. message=[%s] cause=[%s]";
@@ -46,10 +45,8 @@ public class CreateKeywordTreeHandler extends Thread {
         String format = "Retry limit exceeded. message=[%s] cause=[%s]";
         logger.log(Level.SEVERE, String.format(format, gson.toJson(message), e.getMessage()));
       }
-      return CompletableFuture.failedFuture(e);
     }
 
     logger.info("End Batch. [" + gson.toJson(message) + "]");
-    return CompletableFuture.completedFuture(message);
   }
 }
