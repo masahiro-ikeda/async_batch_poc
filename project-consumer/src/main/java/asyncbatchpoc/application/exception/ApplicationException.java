@@ -5,7 +5,6 @@ package asyncbatchpoc.application.exception;
  * リトライ不可.
  */
 public class ApplicationException extends RuntimeException {
-
   public ApplicationException(Throwable cause, String message) {
     super(message, cause);
   }

@@ -4,6 +4,7 @@ import asyncbatchpoc.domain.KeywordTree;
 import asyncbatchpoc.domain.KeywordTreeRepository;
 import asyncbatchpoc.domain.Link;
 import asyncbatchpoc.domain.LinkRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -17,9 +18,12 @@ import java.util.Queue;
 public class CreateKeywordTreeService {
 
   /* 探索の回数上限 */
-  private static final int SEARCH_LIMIT = 20;
+  @Value("${app.searchLimit}")
+  private int searchLimit;
+
   /* 探索の間隔（ミリ秒） */
-  private static final int SEARCH_INTERVAL = 1000;
+  @Value("${app.searchInterval}")
+  private int searchInterval;
 
   private final LinkRepository linkRepository;
   private final KeywordTreeRepository keywordTreeRepository;
@@ -39,11 +43,11 @@ public class CreateKeywordTreeService {
     Queue<KeywordTree> searchKeywordQueue = new LinkedList<>();
     searchKeywordQueue.add(keywordTree);
     int count = 0;
-    while (!searchKeywordQueue.isEmpty() && count < SEARCH_LIMIT) {
+    while (!searchKeywordQueue.isEmpty() && count < searchLimit) {
       // 探索は1秒間隔で行う
       if (count != 0) {
         try {
-          Thread.sleep(SEARCH_INTERVAL);
+          Thread.sleep(searchInterval);
         } catch (InterruptedException e) {
           throw new RuntimeException(e.getCause());
         }

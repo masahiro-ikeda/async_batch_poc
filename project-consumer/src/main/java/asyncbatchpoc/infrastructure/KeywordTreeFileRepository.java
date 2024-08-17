@@ -3,13 +3,13 @@ package asyncbatchpoc.infrastructure;
 
 import asyncbatchpoc.domain.KeywordTree;
 import asyncbatchpoc.domain.KeywordTreeRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,15 +71,16 @@ public class KeywordTreeFileRepository implements KeywordTreeRepository {
   }
 
   /* ファイル出力先パス */
-  private static final String OUTPUT_FILE_PATH_FORMAT = "output/%s_%s.txt";
+  @Value("${app.output.pathFormat}")
+  private String outputPathFormat;
 
   /**
    * ファイル出力する.
    */
   private void fileWrite(List<String> outputs, String firstKeyword, Logger logger) {
-    String outputPath = String.format(OUTPUT_FILE_PATH_FORMAT, firstKeyword, LocalDateTime.now());
+    String outputPath = String.format(outputPathFormat, firstKeyword, LocalDateTime.now());
     try (FileOutputStream fos = new FileOutputStream(outputPath);
-         OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
+         OutputStreamWriter osw = new OutputStreamWriter(fos);
          BufferedWriter writer = new BufferedWriter(osw)) {
       for (String output : outputs) {
         writer.write(output);

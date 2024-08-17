@@ -1,0 +1,5 @@
+app:
+  searchLimit: 20
+  searchInterval: 1000
+  output:
+    pathFormat: output/%s_%s.txt
