@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface MessageQueueClient {
 
-  List<CreateKeywordTreeMessage> receive();
+  List<CreateKeywordTreeMessage> poll();
 
-  void send(CreateKeywordTreeMessage message);
+  void push(CreateKeywordTreeMessage message);
 }

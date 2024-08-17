@@ -20,7 +20,7 @@ public class CreateKeywordTreeScheduler {
 
   @Scheduled(fixedRate = 3000)
   public void execute() {
-    List<CreateKeywordTreeMessage> messages = messageQueueClient.receive();
+    List<CreateKeywordTreeMessage> messages = messageQueueClient.poll();
 
     for (CreateKeywordTreeMessage message : messages) {
       createKeywordTreeHandler.handle(message);

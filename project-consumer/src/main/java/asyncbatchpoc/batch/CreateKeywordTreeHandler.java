@@ -40,7 +40,7 @@ public class CreateKeywordTreeHandler extends Thread {
         String format = "Retry. message=[%s] cause=[%s]";
         logger.log(Level.WARNING, String.format(format, gson.toJson(message), e.getMessage()));
         message.retry();
-        messageQueueClient.send(message);
+        messageQueueClient.push(message);
       } else {
         String format = "Retry limit exceeded. message=[%s] cause=[%s]";
         logger.log(Level.SEVERE, String.format(format, gson.toJson(message), e.getMessage()));

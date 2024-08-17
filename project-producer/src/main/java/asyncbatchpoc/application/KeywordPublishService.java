@@ -17,6 +17,6 @@ public class KeywordPublishService {
 
   public void publish(String keyword) {
     CreateKeywordTreeMessage message = CreateKeywordTreeMessage.newMessage(UUID.randomUUID().toString(), keyword);
-    messageQueueClient.send(message);
+    messageQueueClient.push(message);
   }
 }

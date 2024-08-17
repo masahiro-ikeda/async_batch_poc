@@ -40,7 +40,7 @@ public class AwsSqsClient implements MessageQueueClient {
   /**
    * メッセージを受信する.
    */
-  public List<CreateKeywordTreeMessage> receive() {
+  public List<CreateKeywordTreeMessage> poll() {
     ReceiveMessageRequest receiveMessageRequest =
         ReceiveMessageRequest
             .builder()
@@ -70,7 +70,7 @@ public class AwsSqsClient implements MessageQueueClient {
   /**
    * メッセージを送信する（リトライ用）.
    */
-  public void send(CreateKeywordTreeMessage message) {
+  public void push(CreateKeywordTreeMessage message) {
     Gson gson = new Gson();
     SendMessageRequest request =
         SendMessageRequest
