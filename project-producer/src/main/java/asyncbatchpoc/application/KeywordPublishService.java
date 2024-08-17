@@ -1,5 +1,4 @@
-package asyncbatchpoc.usecase;
-
+package asyncbatchpoc.application;
 
 import asyncbatchpoc.domain.CreateKeywordTreeMessage;
 import asyncbatchpoc.domain.MessageQueueClient;
